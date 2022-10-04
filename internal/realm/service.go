@@ -19,7 +19,7 @@ func NewRealmUsecase(db *gorm.DB) *usecase {
 	}
 }
 
-func (r *usecase) GetRealms() []Realm {
+func (r usecase) GetRealms() []Realm {
 	var realms []Realm
 
 	r.db.Find(&realms)
@@ -27,7 +27,7 @@ func (r *usecase) GetRealms() []Realm {
 	return realms
 }
 
-func (r *usecase) CreateRealm(realm Realm) (*Realm, error) {
+func (r usecase) CreateRealm(realm Realm) (*Realm, error) {
 	result := r.db.Create(&realm)
 
 	if result.Error != nil {

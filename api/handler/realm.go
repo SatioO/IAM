@@ -18,7 +18,7 @@ func NewRealmHandler(usecase realm.RealmUsecase) *handler {
 	}
 }
 
-func (r *handler) GetRealms(res http.ResponseWriter, req *http.Request) {
+func (r handler) GetRealms(res http.ResponseWriter, req *http.Request) {
 	foundRealms := r.realm.GetRealms()
 
 	if len(foundRealms) == 0 {
@@ -30,7 +30,7 @@ func (r *handler) GetRealms(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func (r *handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
+func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 	var body realm.Realm
 	err := json.NewDecoder(req.Body).Decode(&body)
 
