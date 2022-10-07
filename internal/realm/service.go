@@ -23,10 +23,15 @@ func NewRealmUsecase(db *gorm.DB) *usecase {
 
 func (r usecase) GetRealms() []dtos.ListRealmDTO {
 	var foundRealms []Realm
-	r.db.Find(&foundRealms)
+	r.db.Preload("Attributes").Find(&foundRealms)
 
 	var result []dtos.ListRealmDTO
 	for _, realm := range foundRealms {
+		attributes := make(map[string]string)
+		for _, attribute := range realm.Attributes {
+			attributes[attribute.Name] = attribute.Value
+		}
+
 		result = append(result, dtos.ListRealmDTO{
 			Name:                    realm.Name,
 			DisplayName:             realm.DisplayName,
@@ -38,6 +43,7 @@ func (r usecase) GetRealms() []dtos.ListRealmDTO {
 			RegisterEmailAsUsername: realm.RegisterEmailAsUsername,
 			RegisterPhoneAsUsername: realm.RegisterPhoneAsUsername,
 			Enabled:                 realm.Enabled,
+			Attributes:              attributes,
 		})
 	}
 

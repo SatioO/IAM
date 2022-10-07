@@ -33,9 +33,8 @@ func (r handler) GetRealms(res http.ResponseWriter, req *http.Request) {
 
 func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 	var body dtos.CreateRealmDTO
-	err := json.NewDecoder(req.Body).Decode(&body)
 
-	if err != nil {
+	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
 		util.RespondWithError(res, http.StatusInternalServerError, "Failed to decode request body")
 		return
 	}
