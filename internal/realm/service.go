@@ -7,7 +7,7 @@ import (
 )
 
 type RealmUsecase interface {
-	GetRealms() []Realm
+	GetRealms() []dtos.ListRealmDTO
 	CreateRealm(realm dtos.CreateRealmDTO) (*uuid.UUID, error)
 }
 
@@ -21,15 +21,39 @@ func NewRealmUsecase(db *gorm.DB) *usecase {
 	}
 }
 
-func (r usecase) GetRealms() []Realm {
-	var realms []Realm
+func (r usecase) GetRealms() []dtos.ListRealmDTO {
+	var foundRealms []Realm
+	r.db.Find(&foundRealms)
 
-	r.db.Find(&realms)
+	var result []dtos.ListRealmDTO
+	for _, realm := range foundRealms {
+		result = append(result, dtos.ListRealmDTO{
+			Name:                    realm.Name,
+			DisplayName:             realm.DisplayName,
+			Logo:                    realm.Logo,
+			SupportURL:              realm.SupportURL,
+			SupportEmail:            realm.SupportEmail,
+			DuplicateEmailAllowed:   realm.DuplicateEmailAllowed,
+			DuplicatePhoneAllowed:   realm.DuplicatePhoneAllowed,
+			RegisterEmailAsUsername: realm.RegisterEmailAsUsername,
+			RegisterPhoneAsUsername: realm.RegisterPhoneAsUsername,
+			Enabled:                 realm.Enabled,
+		})
+	}
 
-	return realms
+	return result
 }
 
 func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
+	var attributes []RealmAttribute
+
+	for key, value := range body.Attributes {
+		attributes = append(attributes, RealmAttribute{
+			Name:  key,
+			Value: value,
+		})
+	}
+
 	realm := &Realm{
 		Name:                    body.Name,
 		DisplayName:             body.DisplayName,
@@ -41,6 +65,7 @@ func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
 		RegisterEmailAsUsername: body.RegisterEmailAsUsername,
 		RegisterPhoneAsUsername: body.RegisterPhoneAsUsername,
 		Enabled:                 body.Enabled,
+		Attributes:              attributes,
 	}
 
 	createdRealm := r.db.Create(&realm)

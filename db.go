@@ -44,9 +44,9 @@ func CreateDatabaseConnection() (*gorm.DB, error) {
 func AutoMigrateDB(db *gorm.DB) error {
 	// Auto migrate database
 	// Add new models here
-	// err := db.AutoMigrate(&realm.RealmAttribute{})
-	err := db.AutoMigrate(&realm.Realm{})
-	return err
+	db.AutoMigrate(&realm.RealmAttribute{})
+	db.AutoMigrate(&realm.Realm{})
+	return nil
 }
 
 func CloseDBConnection(conn *gorm.DB) {
