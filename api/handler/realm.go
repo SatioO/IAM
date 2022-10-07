@@ -35,14 +35,14 @@ func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 	var body dtos.CreateRealmDTO
 
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
-		util.RespondWithError(res, http.StatusInternalServerError, "Failed to decode request body")
+		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	createdRealm, err := r.realm.CreateRealm(body)
 
 	if err != nil {
-		util.RespondWithError(res, http.StatusInternalServerError, "Failed to create realm")
+		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
 		return
 	}
 

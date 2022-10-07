@@ -1,6 +1,6 @@
 package dtos
 
-type CreateRealmDTO struct {
+type ListRealmDTO struct {
 	Name                    string            `json:"name"`
 	DisplayName             string            `json:"display_name"`
 	Logo                    string            `json:"logo"`
@@ -14,7 +14,7 @@ type CreateRealmDTO struct {
 	Attributes              map[string]string `json:"attributes"`
 }
 
-type ListRealmDTO struct {
+type CreateRealmDTO struct {
 	Name                    string            `json:"name"`
 	DisplayName             string            `json:"display_name"`
 	Logo                    string            `json:"logo"`

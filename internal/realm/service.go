@@ -51,9 +51,17 @@ func (r usecase) GetRealms() []dtos.ListRealmDTO {
 }
 
 func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
-	var attributes []RealmAttribute
+	defaultAttributes := map[string]string{
+		"access_token_lifespan":  ACCESS_TOKEN_LIFESPAN,
+		"refresh_token_lifespan": REFRESH_TOKEN_LIFESPAN,
+	}
 
 	for key, value := range body.Attributes {
+		defaultAttributes[key] = value
+	}
+
+	var attributes []RealmAttribute
+	for key, value := range defaultAttributes {
 		attributes = append(attributes, RealmAttribute{
 			Name:  key,
 			Value: value,
@@ -74,10 +82,8 @@ func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
 		Attributes:              attributes,
 	}
 
-	createdRealm := r.db.Create(&realm)
-
-	if createdRealm.Error != nil {
-		return nil, createdRealm.Error
+	if err := r.db.Create(&realm).Error; err != nil {
+		return nil, err
 	}
 
 	return &realm.ID, nil

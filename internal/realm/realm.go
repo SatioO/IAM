@@ -7,10 +7,15 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	ACCESS_TOKEN_LIFESPAN  = "300"
+	REFRESH_TOKEN_LIFESPAN = "600"
+)
+
 type Realm struct {
 	ID                      uuid.UUID        `gorm:"type:uuid;primary_key;" json:"id"`
-	Name                    string           `gorm:"unique;not null" json:"name" binding:"required"`
-	DisplayName             string           `json:"display_name" binding:"required"`
+	Name                    string           `gorm:"unique;not null" json:"name"`
+	DisplayName             string           `json:"display_name"`
 	Logo                    string           `json:"logo"`
 	SupportURL              string           `json:"support_url"`
 	SupportEmail            string           `json:"support_email"`
@@ -37,7 +42,7 @@ func (u *Realm) BeforeCreate(tx *gorm.DB) (err error) {
 
 type RealmAttribute struct {
 	ID        uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
-	Name      string    `gorm:"not null" json:"name" binding:"required"`
+	Name      string    `gorm:"not null" json:"name"`
 	RealmID   string    `json:"realm_id"`
 	Value     string    `json:"value"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
