@@ -1,12 +1,14 @@
 package realm
 
 import (
+	"github.com/google/uuid"
+	"github.com/satioO/iam/pkg/dtos"
 	"gorm.io/gorm"
 )
 
 type RealmUsecase interface {
 	GetRealms() []Realm
-	CreateRealm(realm Realm) (*Realm, error)
+	CreateRealm(realm dtos.CreateRealmDTO) (*uuid.UUID, error)
 }
 
 type usecase struct {
@@ -27,12 +29,25 @@ func (r usecase) GetRealms() []Realm {
 	return realms
 }
 
-func (r usecase) CreateRealm(realm Realm) (*Realm, error) {
-	result := r.db.Create(&realm)
-
-	if result.Error != nil {
-		return nil, result.Error
+func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
+	realm := &Realm{
+		Name:                    body.Name,
+		DisplayName:             body.DisplayName,
+		Logo:                    body.Logo,
+		SupportURL:              body.SupportURL,
+		SupportEmail:            body.SupportEmail,
+		DuplicateEmailAllowed:   body.DuplicateEmailAllowed,
+		DuplicatePhoneAllowed:   body.DuplicatePhoneAllowed,
+		RegisterEmailAsUsername: body.RegisterEmailAsUsername,
+		RegisterPhoneAsUsername: body.RegisterPhoneAsUsername,
+		Enabled:                 body.Enabled,
 	}
 
-	return &realm, nil
+	createdRealm := r.db.Create(&realm)
+
+	if createdRealm.Error != nil {
+		return nil, createdRealm.Error
+	}
+
+	return &realm.ID, nil
 }

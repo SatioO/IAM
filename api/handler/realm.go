@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/satioO/iam/internal/realm"
+	"github.com/satioO/iam/pkg/dtos"
 	"github.com/satioO/iam/util"
 )
 
@@ -31,7 +32,7 @@ func (r handler) GetRealms(res http.ResponseWriter, req *http.Request) {
 }
 
 func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
-	var body realm.Realm
+	var body dtos.CreateRealmDTO
 	err := json.NewDecoder(req.Body).Decode(&body)
 
 	if err != nil {
