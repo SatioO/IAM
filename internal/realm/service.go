@@ -1,27 +1,34 @@
 package realm
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/satioO/iam/pkg/dtos"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 type RealmUsecase interface {
 	GetRealms() []dtos.ListRealmDTO
 	CreateRealm(realm dtos.CreateRealmDTO) (*uuid.UUID, error)
+	UpdateRealm(realm dtos.UpdateRealmDTO) (*uuid.UUID, error)
 }
 
 type usecase struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger *zap.Logger
 }
 
-func NewRealmUsecase(db *gorm.DB) *usecase {
+func NewRealmUsecase(db *gorm.DB, logger *zap.Logger) *usecase {
 	return &usecase{
 		db,
+		logger,
 	}
 }
 
 func (r usecase) GetRealms() []dtos.ListRealmDTO {
+	r.logger.Info("Fetching realms:::")
 	var foundRealms []Realm
 	r.db.Preload("Attributes").Find(&foundRealms)
 
@@ -51,24 +58,25 @@ func (r usecase) GetRealms() []dtos.ListRealmDTO {
 }
 
 func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
+	r.logger.Info(fmt.Sprintf("Creating realm::: %s", body.Name))
 	defaultAttributes := map[string]string{
 		"access_token_lifespan":  ACCESS_TOKEN_LIFESPAN,
 		"refresh_token_lifespan": REFRESH_TOKEN_LIFESPAN,
 	}
 
-	for key, value := range body.Attributes {
-		defaultAttributes[key] = value
+	for name, value := range body.Attributes {
+		defaultAttributes[name] = value
 	}
 
 	var attributes []RealmAttribute
-	for key, value := range defaultAttributes {
+	for name, value := range defaultAttributes {
 		attributes = append(attributes, RealmAttribute{
-			Name:  key,
+			Name:  name,
 			Value: value,
 		})
 	}
 
-	realm := &Realm{
+	createdRealm := &Realm{
 		Name:                    body.Name,
 		DisplayName:             body.DisplayName,
 		Logo:                    body.Logo,
@@ -82,9 +90,13 @@ func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
 		Attributes:              attributes,
 	}
 
-	if err := r.db.Create(&realm).Error; err != nil {
+	if err := r.db.Create(&createdRealm).Error; err != nil {
 		return nil, err
 	}
 
-	return &realm.ID, nil
+	return &createdRealm.ID, nil
+}
+
+func (r usecase) UpdateRealm(realm dtos.UpdateRealmDTO) (*uuid.UUID, error) {
+	return nil, nil
 }

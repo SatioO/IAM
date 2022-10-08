@@ -7,15 +7,18 @@ import (
 	"github.com/satioO/iam/internal/realm"
 	"github.com/satioO/iam/pkg/dtos"
 	"github.com/satioO/iam/util"
+	"go.uber.org/zap"
 )
 
 type handler struct {
-	realm realm.RealmUsecase
+	realm  realm.RealmUsecase
+	logger *zap.Logger
 }
 
-func NewRealmHandler(usecase realm.RealmUsecase) *handler {
+func NewRealmHandler(usecase realm.RealmUsecase, logger *zap.Logger) *handler {
 	return &handler{
-		realm: usecase,
+		realm:  usecase,
+		logger: logger,
 	}
 }
 
@@ -49,3 +52,5 @@ func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 	util.RespondWithJSON(res, http.StatusOK, createdRealm)
 	return
 }
+
+func (r handler) UpdateRealm(res http.ResponseWriter, req *http.Request) {}
