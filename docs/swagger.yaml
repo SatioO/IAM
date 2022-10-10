@@ -1,0 +1,223 @@
+definitions:
+  dtos.CreateRealmDTO:
+    properties:
+      attributes:
+        additionalProperties:
+          type: string
+        type: object
+      display_name:
+        type: string
+      duplicate_email_allowed:
+        type: boolean
+      duplicate_phone_allowed:
+        type: boolean
+      enabled:
+        type: boolean
+      logo:
+        type: string
+      name:
+        type: string
+      register_email_as_username:
+        type: boolean
+      register_phone_as_username:
+        type: boolean
+      support_email:
+        type: string
+      support_url:
+        type: string
+    type: object
+  dtos.GetRealmDTO:
+    properties:
+      attributes:
+        additionalProperties:
+          type: string
+        type: object
+      display_name:
+        type: string
+      duplicate_email_allowed:
+        type: boolean
+      duplicate_phone_allowed:
+        type: boolean
+      enabled:
+        type: boolean
+      id:
+        type: string
+      logo:
+        type: string
+      name:
+        type: string
+      register_email_as_username:
+        type: boolean
+      register_phone_as_username:
+        type: boolean
+      support_email:
+        type: string
+      support_url:
+        type: string
+    type: object
+  dtos.ListRealmDTO:
+    properties:
+      attributes:
+        additionalProperties:
+          type: string
+        type: object
+      display_name:
+        type: string
+      duplicate_email_allowed:
+        type: boolean
+      duplicate_phone_allowed:
+        type: boolean
+      enabled:
+        type: boolean
+      id:
+        type: string
+      logo:
+        type: string
+      name:
+        type: string
+      register_email_as_username:
+        type: boolean
+      register_phone_as_username:
+        type: boolean
+      support_email:
+        type: string
+      support_url:
+        type: string
+    type: object
+  dtos.UpdateRealmDTO:
+    properties:
+      display_name:
+        type: string
+      duplicate_email_allowed:
+        type: boolean
+      duplicate_phone_allowed:
+        type: boolean
+      enabled:
+        type: boolean
+      logo:
+        type: string
+      name:
+        type: string
+      register_email_as_username:
+        type: boolean
+      register_phone_as_username:
+        type: boolean
+      support_email:
+        type: string
+      support_url:
+        type: string
+    type: object
+info:
+  contact:
+    email: vaibhav.satam29991@gmail.com
+  description: These apis are built to handle identity management.
+  title: Identity Management Server
+  version: "1.0"
+paths:
+  /realm:
+    get:
+      consumes:
+      - application/json
+      description: This operation is to get list of realms
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dtos.ListRealmDTO'
+            type: array
+      summary: List of realms
+      tags:
+      - Realm
+    post:
+      consumes:
+      - application/json
+      description: This operation is to create new realm
+      parameters:
+      - description: realm data
+        in: body
+        name: realm
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateRealmDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Create Realm
+      tags:
+      - Realm
+  /realm/{realmId}:
+    delete:
+      consumes:
+      - application/json
+      description: This operation is to delete new realm
+      parameters:
+      - description: realm identifier
+        in: query
+        name: realmId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+      summary: Delete Realm
+      tags:
+      - Realm
+    get:
+      consumes:
+      - application/json
+      description: This operation is to get details of the realm
+      parameters:
+      - description: realm identifier
+        in: path
+        name: realmId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dtos.GetRealmDTO'
+            type: array
+      summary: Get details of realm
+      tags:
+      - Realm
+    put:
+      consumes:
+      - application/json
+      description: This operation is to update new realm
+      parameters:
+      - description: realm data
+        in: body
+        name: realm
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateRealmDTO'
+      - description: realm identifier
+        in: query
+        name: realmId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Update Realm
+      tags:
+      - Realm
+swagger: "2.0"

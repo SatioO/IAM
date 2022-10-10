@@ -1,0 +1,340 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "These apis are built to handle identity management.",
+        "title": "Identity Management Server",
+        "contact": {
+            "email": "vaibhav.satam29991@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/realm": {
+            "get": {
+                "description": "This operation is to get list of realms",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Realm"
+                ],
+                "summary": "List of realms",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dtos.ListRealmDTO"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "This operation is to create new realm",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Realm"
+                ],
+                "summary": "Create Realm",
+                "parameters": [
+                    {
+                        "description": "realm data",
+                        "name": "realm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CreateRealmDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/realm/{realmId}": {
+            "get": {
+                "description": "This operation is to get details of the realm",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Realm"
+                ],
+                "summary": "Get details of realm",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "realm identifier",
+                        "name": "realmId",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dtos.GetRealmDTO"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "This operation is to update new realm",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Realm"
+                ],
+                "summary": "Update Realm",
+                "parameters": [
+                    {
+                        "description": "realm data",
+                        "name": "realm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateRealmDTO"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "realm identifier",
+                        "name": "realmId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "This operation is to delete new realm",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Realm"
+                ],
+                "summary": "Delete Realm",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "realm identifier",
+                        "name": "realmId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dtos.CreateRealmDTO": {
+            "type": "object",
+            "properties": {
+                "attributes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "duplicate_email_allowed": {
+                    "type": "boolean"
+                },
+                "duplicate_phone_allowed": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "register_email_as_username": {
+                    "type": "boolean"
+                },
+                "register_phone_as_username": {
+                    "type": "boolean"
+                },
+                "support_email": {
+                    "type": "string"
+                },
+                "support_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.GetRealmDTO": {
+            "type": "object",
+            "properties": {
+                "attributes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "duplicate_email_allowed": {
+                    "type": "boolean"
+                },
+                "duplicate_phone_allowed": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "register_email_as_username": {
+                    "type": "boolean"
+                },
+                "register_phone_as_username": {
+                    "type": "boolean"
+                },
+                "support_email": {
+                    "type": "string"
+                },
+                "support_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.ListRealmDTO": {
+            "type": "object",
+            "properties": {
+                "attributes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "duplicate_email_allowed": {
+                    "type": "boolean"
+                },
+                "duplicate_phone_allowed": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "register_email_as_username": {
+                    "type": "boolean"
+                },
+                "register_phone_as_username": {
+                    "type": "boolean"
+                },
+                "support_email": {
+                    "type": "string"
+                },
+                "support_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UpdateRealmDTO": {
+            "type": "object",
+            "properties": {
+                "display_name": {
+                    "type": "string"
+                },
+                "duplicate_email_allowed": {
+                    "type": "boolean"
+                },
+                "duplicate_phone_allowed": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "register_email_as_username": {
+                    "type": "boolean"
+                },
+                "register_phone_as_username": {
+                    "type": "boolean"
+                },
+                "support_email": {
+                    "type": "string"
+                },
+                "support_url": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
