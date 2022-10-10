@@ -13,20 +13,20 @@ const (
 )
 
 type Realm struct {
-	ID                      uuid.UUID        `gorm:"type:uuid;primary_key;" json:"id"`
-	Name                    string           `gorm:"unique;not null" json:"name"`
-	DisplayName             string           `json:"display_name"`
-	Logo                    string           `json:"logo"`
-	SupportURL              string           `json:"support_url"`
-	SupportEmail            string           `json:"support_email"`
-	DuplicateEmailAllowed   bool             `gorm:"default:false" json:"duplicate_email_allowed"`
-	DuplicatePhoneAllowed   bool             `gorm:"default:false" json:"duplicate_phone_allowed"`
-	RegisterEmailAsUsername bool             `gorm:"default:true" json:"register_email_as_username"`
-	RegisterPhoneAsUsername bool             `gorm:"default:false" json:"register_phone_as_username"`
-	Enabled                 bool             `gorm:"not null" json:"enabled"`
-	CreatedAt               time.Time        `gorm:"autoCreateTime:milli" json:"created_at"`
-	UpdatedAt               time.Time        `gorm:"autoUpdateTime:milli" json:"updated_at"`
-	Attributes              []RealmAttribute `json:"attributes"`
+	ID                      uuid.UUID `gorm:"type:uuid;primary_key;"`
+	Name                    string    `gorm:"unique;not null"`
+	DisplayName             string
+	Logo                    string
+	SupportURL              string
+	SupportEmail            string
+	DuplicateEmailAllowed   *bool     `gorm:"default:false"`
+	DuplicatePhoneAllowed   *bool     `gorm:"default:false"`
+	RegisterEmailAsUsername *bool     `gorm:"default:true"`
+	RegisterPhoneAsUsername *bool     `gorm:"default:false"`
+	Enabled                 *bool     `gorm:"not null"`
+	CreatedAt               time.Time `gorm:"autoCreateTime:milli"`
+	UpdatedAt               time.Time `gorm:"autoUpdateTime:milli"`
+	Attributes              []RealmAttribute
 }
 
 // TableName overrides the table name used by User to `profiles`
@@ -41,12 +41,12 @@ func (u *Realm) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type RealmAttribute struct {
-	ID        uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
-	Name      string    `gorm:"not null" json:"name"`
-	RealmID   string    `json:"realm_id"`
-	Value     string    `json:"value"`
-	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
+	ID        uuid.UUID `gorm:"type:uuid;primary_key"`
+	Name      string    `gorm:"not null"`
+	RealmID   string
+	Value     string
+	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime:milli"`
 }
 
 // TableName overrides the table name used by User to `profiles`

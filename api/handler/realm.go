@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/satioO/iam/internal/realm"
 	"github.com/satioO/iam/pkg/dtos"
 	"github.com/satioO/iam/util"
@@ -53,4 +55,35 @@ func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func (r handler) UpdateRealm(res http.ResponseWriter, req *http.Request) {}
+func (r handler) UpdateRealm(res http.ResponseWriter, req *http.Request) {
+	var body dtos.UpdateRealmDTO
+
+	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
+		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	params := mux.Vars(req)
+
+	updatedRealm, err := r.realm.UpdateRealm(uuid.MustParse(params["realmId"]), body)
+
+	if err != nil {
+		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	util.RespondWithJSON(res, http.StatusOK, updatedRealm)
+	return
+}
+
+func (r handler) DeleteRealm(res http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+
+	if err := r.realm.DeleteRealm(uuid.MustParse(params["realmId"])); err != nil {
+		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	util.RespondWithJSON(res, http.StatusOK, true)
+	return
+}

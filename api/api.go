@@ -24,7 +24,8 @@ func NewMux(db *gorm.DB, logger *zap.Logger) *mux.Router {
 
 	r.HandleFunc("/realm", realmHandler.GetRealms).Methods(http.MethodGet)
 	r.HandleFunc("/realm", realmHandler.CreateRealm).Methods(http.MethodPost)
-	r.HandleFunc("/realm", realmHandler.UpdateRealm).Methods(http.MethodPut)
+	r.HandleFunc("/realm/{realmId}", realmHandler.UpdateRealm).Methods(http.MethodPut)
+	r.HandleFunc("/realm/{realmId}", realmHandler.DeleteRealm).Methods(http.MethodDelete)
 
 	return r
 }

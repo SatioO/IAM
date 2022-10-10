@@ -12,7 +12,8 @@ import (
 type RealmUsecase interface {
 	GetRealms() []dtos.ListRealmDTO
 	CreateRealm(realm dtos.CreateRealmDTO) (*uuid.UUID, error)
-	UpdateRealm(realm dtos.UpdateRealmDTO) (*uuid.UUID, error)
+	UpdateRealm(realmId uuid.UUID, realm dtos.UpdateRealmDTO) (*uuid.UUID, error)
+	DeleteRealm(realmId uuid.UUID) error
 }
 
 type usecase struct {
@@ -30,7 +31,7 @@ func NewRealmUsecase(db *gorm.DB, logger *zap.Logger) *usecase {
 func (r usecase) GetRealms() []dtos.ListRealmDTO {
 	r.logger.Info("Fetching realms:::")
 	var foundRealms []Realm
-	r.db.Preload("Attributes").Find(&foundRealms)
+	r.db.Preload("Attributes").Where("enabled = ?", true).Find(&foundRealms)
 
 	var result []dtos.ListRealmDTO
 	for _, realm := range foundRealms {
@@ -40,6 +41,7 @@ func (r usecase) GetRealms() []dtos.ListRealmDTO {
 		}
 
 		result = append(result, dtos.ListRealmDTO{
+			ID:                      realm.ID,
 			Name:                    realm.Name,
 			DisplayName:             realm.DisplayName,
 			Logo:                    realm.Logo,
@@ -97,6 +99,38 @@ func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
 	return &createdRealm.ID, nil
 }
 
-func (r usecase) UpdateRealm(realm dtos.UpdateRealmDTO) (*uuid.UUID, error) {
-	return nil, nil
+func (r usecase) UpdateRealm(realmId uuid.UUID, realm dtos.UpdateRealmDTO) (*uuid.UUID, error) {
+	r.logger.Info(fmt.Sprintf("Updating realm::: %s", realmId))
+
+	updatedRealm := Realm{
+		Name:                    realm.Name,
+		DisplayName:             realm.DisplayName,
+		Logo:                    realm.Logo,
+		SupportURL:              realm.SupportURL,
+		SupportEmail:            realm.SupportEmail,
+		DuplicateEmailAllowed:   realm.DuplicateEmailAllowed,
+		DuplicatePhoneAllowed:   realm.DuplicatePhoneAllowed,
+		RegisterEmailAsUsername: realm.RegisterEmailAsUsername,
+		RegisterPhoneAsUsername: realm.DuplicatePhoneAllowed,
+	}
+
+	if err := r.db.Where("id = ?", realmId).Updates(&updatedRealm).Error; err != nil {
+		return nil, err
+	}
+
+	return &realmId, nil
+}
+
+func (r usecase) DeleteRealm(realmId uuid.UUID) error {
+	status := false
+	deletedRealm := Realm{Enabled: &status}
+
+	query := r.db.Where("id = ?", realmId).Updates(&deletedRealm)
+	r.logger.Info(fmt.Sprintf("rows affected: %d", query.RowsAffected))
+
+	if err := query.Error; err != nil {
+		return err
+	}
+
+	return nil
 }
