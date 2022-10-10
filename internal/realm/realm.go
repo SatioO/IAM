@@ -13,7 +13,7 @@ const (
 )
 
 type Realm struct {
-	ID                      uuid.UUID `gorm:"type:uuid;primary_key;"`
+	ID                      uuid.UUID `gorm:"type:uuid;primary_key"`
 	Name                    string    `gorm:"unique;not null"`
 	DisplayName             string
 	Logo                    string

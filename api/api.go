@@ -6,6 +6,7 @@ import (
 	chimid "github.com/go-chi/chi/middleware"
 	"github.com/gorilla/mux"
 	"github.com/satioO/iam/api/handler"
+	"github.com/satioO/iam/internal/client"
 	"github.com/satioO/iam/internal/realm"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -27,6 +28,10 @@ func NewMux(db *gorm.DB, logger *zap.Logger) *mux.Router {
 	r.HandleFunc("/realm", realmHandler.CreateRealm).Methods(http.MethodPost)
 	r.HandleFunc("/realm/{realmId}", realmHandler.UpdateRealm).Methods(http.MethodPut)
 	r.HandleFunc("/realm/{realmId}", realmHandler.DeleteRealm).Methods(http.MethodDelete)
+
+	// Client Management
+	clientUsecase := client.NewClientUsecase(db, logger)
+	handler.NewClientHandler(clientUsecase, logger)
 
 	return r
 }

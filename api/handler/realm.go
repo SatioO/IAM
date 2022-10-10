@@ -12,13 +12,13 @@ import (
 	"go.uber.org/zap"
 )
 
-type handler struct {
+type realmHandler struct {
 	realm  realm.RealmUsecase
 	logger *zap.Logger
 }
 
-func NewRealmHandler(usecase realm.RealmUsecase, logger *zap.Logger) *handler {
-	return &handler{
+func NewRealmHandler(usecase realm.RealmUsecase, logger *zap.Logger) *realmHandler {
+	return &realmHandler{
 		realm:  usecase,
 		logger: logger,
 	}
@@ -32,7 +32,7 @@ func NewRealmHandler(usecase realm.RealmUsecase, logger *zap.Logger) *handler {
 // @Produce      json
 // @Success      200  {array}   dtos.ListRealmDTO
 // @Router       /realm [get]
-func (r handler) GetRealms(res http.ResponseWriter, req *http.Request) {
+func (r realmHandler) GetRealms(res http.ResponseWriter, req *http.Request) {
 	foundRealms := r.realm.GetRealms()
 
 	if len(foundRealms) == 0 {
@@ -53,7 +53,7 @@ func (r handler) GetRealms(res http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Success      200  {array}   dtos.GetRealmDTO
 // @Router       /realm/{realmId} [get]
-func (r handler) GetRealmByID(res http.ResponseWriter, req *http.Request) {
+func (r realmHandler) GetRealmByID(res http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 
 	foundRealm, err := r.realm.GetRealmByID(uuid.MustParse(params["realmId"]))
@@ -76,7 +76,7 @@ func (r handler) GetRealmByID(res http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Success      200  {string}   uuid.UUID
 // @Router       /realm [post]
-func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
+func (r realmHandler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 	var body dtos.CreateRealmDTO
 
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
@@ -105,7 +105,7 @@ func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Success      200  {string}   uuid.UUID
 // @Router       /realm/{realmId} [put]
-func (r handler) UpdateRealm(res http.ResponseWriter, req *http.Request) {
+func (r realmHandler) UpdateRealm(res http.ResponseWriter, req *http.Request) {
 	var body dtos.UpdateRealmDTO
 
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
@@ -135,7 +135,7 @@ func (r handler) UpdateRealm(res http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Success      200  {boolean}   bool
 // @Router       /realm/{realmId} [delete]
-func (r handler) DeleteRealm(res http.ResponseWriter, req *http.Request) {
+func (r realmHandler) DeleteRealm(res http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 
 	if err := r.realm.DeleteRealm(uuid.MustParse(params["realmId"])); err != nil {
