@@ -29,10 +29,11 @@ func NewRealmUsecase(db *gorm.DB, logger *zap.Logger) *usecase {
 	}
 }
 
-func (r usecase) GetRealms() []dtos.ListRealmDTO {
-	r.logger.Info("Fetching realms:::")
+func (u usecase) GetRealms() []dtos.ListRealmDTO {
+	u.logger.Info("Fetching realms:::")
+
 	var foundRealms []Realm
-	r.db.Preload("Attributes").Where("enabled = ?", true).Find(&foundRealms)
+	u.db.Preload("Attributes").Where("enabled = ?", true).Find(&foundRealms)
 
 	var result []dtos.ListRealmDTO
 	for _, realm := range foundRealms {
@@ -60,10 +61,10 @@ func (r usecase) GetRealms() []dtos.ListRealmDTO {
 	return result
 }
 
-func (r usecase) GetRealmByID(realmId uuid.UUID) (*dtos.GetRealmDTO, error) {
+func (u usecase) GetRealmByID(realmId uuid.UUID) (*dtos.GetRealmDTO, error) {
 	var foundRealm Realm
 
-	if err := r.db.Where("id = ?", realmId).Preload("Attributes").First(&foundRealm).Error; err != nil {
+	if err := u.db.Where("id = ?", realmId).Preload("Attributes").First(&foundRealm).Error; err != nil {
 		return nil, err
 	}
 
@@ -88,8 +89,8 @@ func (r usecase) GetRealmByID(realmId uuid.UUID) (*dtos.GetRealmDTO, error) {
 	}, nil
 }
 
-func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
-	r.logger.Info(fmt.Sprintf("Creating realm::: %s", body.Name))
+func (u usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
+	u.logger.Info(fmt.Sprintf("Creating realm::: %s", body.Name))
 	defaultAttributes := map[string]string{
 		"access_token_lifespan":  ACCESS_TOKEN_LIFESPAN,
 		"refresh_token_lifespan": REFRESH_TOKEN_LIFESPAN,
@@ -121,15 +122,15 @@ func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
 		Attributes:              attributes,
 	}
 
-	if err := r.db.Create(&createdRealm).Error; err != nil {
+	if err := u.db.Create(&createdRealm).Error; err != nil {
 		return nil, err
 	}
 
 	return &createdRealm.ID, nil
 }
 
-func (r usecase) UpdateRealm(realmId uuid.UUID, realm dtos.UpdateRealmDTO) (*uuid.UUID, error) {
-	r.logger.Info(fmt.Sprintf("Updating realm::: %s", realmId))
+func (u usecase) UpdateRealm(realmId uuid.UUID, realm dtos.UpdateRealmDTO) (*uuid.UUID, error) {
+	u.logger.Info(fmt.Sprintf("Updating realm::: %s", realmId))
 
 	updatedRealm := Realm{
 		Name:                    realm.Name,
@@ -143,19 +144,19 @@ func (r usecase) UpdateRealm(realmId uuid.UUID, realm dtos.UpdateRealmDTO) (*uui
 		RegisterPhoneAsUsername: realm.DuplicatePhoneAllowed,
 	}
 
-	if err := r.db.Where("id = ?", realmId).Updates(&updatedRealm).Error; err != nil {
+	if err := u.db.Where("id = ?", realmId).Updates(&updatedRealm).Error; err != nil {
 		return nil, err
 	}
 
 	return &realmId, nil
 }
 
-func (r usecase) DeleteRealm(realmId uuid.UUID) error {
+func (u usecase) DeleteRealm(realmId uuid.UUID) error {
 	status := false
 	deletedRealm := Realm{Enabled: &status}
 
-	query := r.db.Where("id = ?", realmId).Updates(&deletedRealm)
-	r.logger.Info(fmt.Sprintf("rows affected: %d", query.RowsAffected))
+	query := u.db.Where("id = ?", realmId).Updates(&deletedRealm)
+	u.logger.Info(fmt.Sprintf("rows affected: %d", query.RowsAffected))
 
 	if err := query.Error; err != nil {
 		return err

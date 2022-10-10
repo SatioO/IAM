@@ -2,10 +2,17 @@ package client
 
 import (
 	"github.com/google/uuid"
+	"github.com/satioO/iam/pkg/dtos"
 	"gorm.io/gorm"
 )
 
-type ClientUsecase interface{}
+type ClientUsecase interface {
+	GetClients() (*dtos.GetClientsDTO, error)
+	GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error)
+	CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error)
+	UpdateClient(clientId uuid.UUID, body dtos.UpdateClientDTO) (*uuid.UUID, error)
+	DeleteClient(clientId uuid.UUID) (*bool, error)
+}
 
 type Client struct {
 	ID                       uuid.UUID `gorm:"type:uuid;primary_key"`

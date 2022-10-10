@@ -31,7 +31,13 @@ func NewMux(db *gorm.DB, logger *zap.Logger) *mux.Router {
 
 	// Client Management
 	clientUsecase := client.NewClientUsecase(db, logger)
-	handler.NewClientHandler(clientUsecase, logger)
+	clientHandler := handler.NewClientHandler(clientUsecase, logger)
+
+	r.HandleFunc("/client", clientHandler.GetClients).Methods(http.MethodGet)
+	r.HandleFunc("/client/{clientId}", clientHandler.GetClientByID).Methods(http.MethodGet)
+	r.HandleFunc("/client", clientHandler.CreateClient).Methods(http.MethodPost)
+	r.HandleFunc("/client/{clientId}", clientHandler.UpdateClient).Methods(http.MethodPut)
+	r.HandleFunc("/client/{clientId}", clientHandler.DeleteClient).Methods(http.MethodDelete)
 
 	return r
 }
