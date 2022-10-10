@@ -7,7 +7,7 @@ import (
 )
 
 type ClientUsecase interface {
-	GetClients() (*dtos.GetClientsDTO, error)
+	GetClients() (*dtos.ListClientsDTO, error)
 	GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error)
 	CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error)
 	UpdateClient(clientId uuid.UUID, body dtos.UpdateClientDTO) (*uuid.UUID, error)

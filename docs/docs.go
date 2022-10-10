@@ -18,6 +18,164 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/client": {
+            "get": {
+                "description": "This operation is to get list of clients",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "List of clients",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dtos.ListClientsDTO"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "This operation is to create new client",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Creates Client",
+                "parameters": [
+                    {
+                        "description": "client data",
+                        "name": "client",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CreateClientDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/client/{clientId}": {
+            "get": {
+                "description": "This operation is to get details of the client",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Get details of client",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "client identifier",
+                        "name": "clientId",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.GetClientDTO"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "This operation is to update new client",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Update client",
+                "parameters": [
+                    {
+                        "description": "client data",
+                        "name": "client",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateClientDTO"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "client identifier",
+                        "name": "clientId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "This operation is to delete client",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Delete Client",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "client identifier",
+                        "name": "clientId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
         "/realm": {
             "get": {
                 "description": "This operation is to get list of realms",
@@ -101,10 +259,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/dtos.GetRealmDTO"
-                            }
+                            "$ref": "#/definitions/dtos.GetRealmDTO"
                         }
                     }
                 }
@@ -149,7 +304,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "This operation is to delete new realm",
+                "description": "This operation is to delete realm",
                 "consumes": [
                     "application/json"
                 ],
@@ -181,6 +336,47 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dtos.CreateClientDTO": {
+            "type": "object",
+            "properties": {
+                "base_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "direct_access_grant_enabled": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "implicit_flow_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "public_client": {
+                    "type": "boolean"
+                },
+                "redirect_uris": {
+                    "type": "string"
+                },
+                "root_url": {
+                    "type": "string"
+                },
+                "service_account_enabled": {
+                    "type": "boolean"
+                },
+                "standard_flow_enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
         "dtos.CreateRealmDTO": {
             "type": "object",
             "properties": {
@@ -219,6 +415,50 @@ const docTemplate = `{
                 },
                 "support_url": {
                     "type": "string"
+                }
+            }
+        },
+        "dtos.GetClientDTO": {
+            "type": "object",
+            "properties": {
+                "base_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "direct_access_grant_enabled": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "implicit_flow_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "public_client": {
+                    "type": "boolean"
+                },
+                "redirect_uris": {
+                    "type": "string"
+                },
+                "root_url": {
+                    "type": "string"
+                },
+                "service_account_enabled": {
+                    "type": "boolean"
+                },
+                "standard_flow_enabled": {
+                    "type": "boolean"
                 }
             }
         },
@@ -266,6 +506,50 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.ListClientsDTO": {
+            "type": "object",
+            "properties": {
+                "base_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "direct_access_grant_enabled": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "implicit_flow_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "public_client": {
+                    "type": "boolean"
+                },
+                "redirect_uris": {
+                    "type": "string"
+                },
+                "root_url": {
+                    "type": "string"
+                },
+                "service_account_enabled": {
+                    "type": "boolean"
+                },
+                "standard_flow_enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
         "dtos.ListRealmDTO": {
             "type": "object",
             "properties": {
@@ -307,6 +591,44 @@ const docTemplate = `{
                 },
                 "support_url": {
                     "type": "string"
+                }
+            }
+        },
+        "dtos.UpdateClientDTO": {
+            "type": "object",
+            "properties": {
+                "base_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "direct_access_grant_enabled": {
+                    "type": "boolean"
+                },
+                "implicit_flow_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "public_client": {
+                    "type": "boolean"
+                },
+                "redirect_uris": {
+                    "type": "string"
+                },
+                "root_url": {
+                    "type": "string"
+                },
+                "service_account_enabled": {
+                    "type": "boolean"
+                },
+                "standard_flow_enabled": {
+                    "type": "boolean"
                 }
             }
         },

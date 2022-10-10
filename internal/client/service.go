@@ -18,7 +18,7 @@ func NewClientUsecase(db *gorm.DB, logger *zap.Logger) *usecase {
 	return &usecase{db, logger}
 }
 
-func (u usecase) GetClients() (*dtos.GetClientsDTO, error) {
+func (u usecase) GetClients() (*dtos.ListClientsDTO, error) {
 	return nil, errors.New("Not Implmeneted")
 }
 

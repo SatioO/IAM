@@ -1,4 +1,31 @@
 definitions:
+  dtos.CreateClientDTO:
+    properties:
+      base_url:
+        type: string
+      description:
+        type: string
+      direct_access_grant_enabled:
+        type: boolean
+      enabled:
+        type: boolean
+      implicit_flow_enabled:
+        type: boolean
+      name:
+        type: string
+      protocol:
+        type: string
+      public_client:
+        type: boolean
+      redirect_uris:
+        type: string
+      root_url:
+        type: string
+      service_account_enabled:
+        type: boolean
+      standard_flow_enabled:
+        type: boolean
+    type: object
   dtos.CreateRealmDTO:
     properties:
       attributes:
@@ -25,6 +52,35 @@ definitions:
         type: string
       support_url:
         type: string
+    type: object
+  dtos.GetClientDTO:
+    properties:
+      base_url:
+        type: string
+      description:
+        type: string
+      direct_access_grant_enabled:
+        type: boolean
+      enabled:
+        type: boolean
+      id:
+        type: string
+      implicit_flow_enabled:
+        type: boolean
+      name:
+        type: string
+      protocol:
+        type: string
+      public_client:
+        type: boolean
+      redirect_uris:
+        type: string
+      root_url:
+        type: string
+      service_account_enabled:
+        type: boolean
+      standard_flow_enabled:
+        type: boolean
     type: object
   dtos.GetRealmDTO:
     properties:
@@ -55,6 +111,35 @@ definitions:
       support_url:
         type: string
     type: object
+  dtos.ListClientsDTO:
+    properties:
+      base_url:
+        type: string
+      description:
+        type: string
+      direct_access_grant_enabled:
+        type: boolean
+      enabled:
+        type: boolean
+      id:
+        type: string
+      implicit_flow_enabled:
+        type: boolean
+      name:
+        type: string
+      protocol:
+        type: string
+      public_client:
+        type: boolean
+      redirect_uris:
+        type: string
+      root_url:
+        type: string
+      service_account_enabled:
+        type: boolean
+      standard_flow_enabled:
+        type: boolean
+    type: object
   dtos.ListRealmDTO:
     properties:
       attributes:
@@ -83,6 +168,31 @@ definitions:
         type: string
       support_url:
         type: string
+    type: object
+  dtos.UpdateClientDTO:
+    properties:
+      base_url:
+        type: string
+      description:
+        type: string
+      direct_access_grant_enabled:
+        type: boolean
+      implicit_flow_enabled:
+        type: boolean
+      name:
+        type: string
+      protocol:
+        type: string
+      public_client:
+        type: boolean
+      redirect_uris:
+        type: string
+      root_url:
+        type: string
+      service_account_enabled:
+        type: boolean
+      standard_flow_enabled:
+        type: boolean
     type: object
   dtos.UpdateRealmDTO:
     properties:
@@ -114,6 +224,110 @@ info:
   title: Identity Management Server
   version: "1.0"
 paths:
+  /client:
+    get:
+      consumes:
+      - application/json
+      description: This operation is to get list of clients
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dtos.ListClientsDTO'
+            type: array
+      summary: List of clients
+      tags:
+      - Client
+    post:
+      consumes:
+      - application/json
+      description: This operation is to create new client
+      parameters:
+      - description: client data
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateClientDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Creates Client
+      tags:
+      - Client
+  /client/{clientId}:
+    delete:
+      consumes:
+      - application/json
+      description: This operation is to delete client
+      parameters:
+      - description: client identifier
+        in: query
+        name: clientId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+      summary: Delete Client
+      tags:
+      - Client
+    get:
+      consumes:
+      - application/json
+      description: This operation is to get details of the client
+      parameters:
+      - description: client identifier
+        in: path
+        name: clientId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.GetClientDTO'
+      summary: Get details of client
+      tags:
+      - Client
+    put:
+      consumes:
+      - application/json
+      description: This operation is to update new client
+      parameters:
+      - description: client data
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateClientDTO'
+      - description: client identifier
+        in: query
+        name: clientId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Update client
+      tags:
+      - Client
   /realm:
     get:
       consumes:
@@ -156,7 +370,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: This operation is to delete new realm
+      description: This operation is to delete realm
       parameters:
       - description: realm identifier
         in: query
@@ -188,9 +402,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/dtos.GetRealmDTO'
-            type: array
+            $ref: '#/definitions/dtos.GetRealmDTO'
       summary: Get details of realm
       tags:
       - Realm

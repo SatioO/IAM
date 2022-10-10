@@ -50,7 +50,7 @@ func (r realmHandler) GetRealms(res http.ResponseWriter, req *http.Request) {
 // @Tags         Realm
 // @Accept       json
 // @Produce      json
-// @Success      200  {array}   dtos.GetRealmDTO
+// @Success      200  {object}   dtos.GetRealmDTO
 // @Router       /realm/{realmId} [get]
 func (r realmHandler) GetRealmByID(res http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
@@ -124,7 +124,7 @@ func (r realmHandler) UpdateRealm(res http.ResponseWriter, req *http.Request) {
 
 // Delete Realm godoc
 // @Summary      Delete Realm
-// @Description  This operation is to delete new realm
+// @Description  This operation is to delete realm
 // @Param realmId query string true "realm identifier"
 // @Tags         Realm
 // @Accept       json
