@@ -41,7 +41,6 @@ func (r realmHandler) GetRealms(res http.ResponseWriter, req *http.Request) {
 	}
 
 	util.RespondWithJSON(res, http.StatusOK, foundRealms)
-	return
 }
 
 // Get Realm Details godoc
@@ -64,7 +63,6 @@ func (r realmHandler) GetRealmByID(res http.ResponseWriter, req *http.Request) {
 	}
 
 	util.RespondWithJSON(res, http.StatusOK, foundRealm)
-	return
 }
 
 // Create Realm Details godoc
@@ -92,7 +90,6 @@ func (r realmHandler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 	}
 
 	util.RespondWithJSON(res, http.StatusOK, createdRealm)
-	return
 }
 
 // Update Realm Details godoc
@@ -123,7 +120,6 @@ func (r realmHandler) UpdateRealm(res http.ResponseWriter, req *http.Request) {
 	}
 
 	util.RespondWithJSON(res, http.StatusOK, updatedRealm)
-	return
 }
 
 // Delete Realm godoc
@@ -144,5 +140,4 @@ func (r realmHandler) DeleteRealm(res http.ResponseWriter, req *http.Request) {
 	}
 
 	util.RespondWithJSON(res, http.StatusOK, true)
-	return
 }
