@@ -11,6 +11,7 @@ import (
 
 type RealmUsecase interface {
 	GetRealms() []dtos.ListRealmDTO
+	GetRealmByID(realmId uuid.UUID) (*dtos.GetRealmDTO, error)
 	CreateRealm(realm dtos.CreateRealmDTO) (*uuid.UUID, error)
 	UpdateRealm(realmId uuid.UUID, realm dtos.UpdateRealmDTO) (*uuid.UUID, error)
 	DeleteRealm(realmId uuid.UUID) error
@@ -57,6 +58,34 @@ func (r usecase) GetRealms() []dtos.ListRealmDTO {
 	}
 
 	return result
+}
+
+func (r usecase) GetRealmByID(realmId uuid.UUID) (*dtos.GetRealmDTO, error) {
+	var foundRealm Realm
+
+	if err := r.db.Where("id = ?", realmId).Preload("Attributes").First(&foundRealm).Error; err != nil {
+		return nil, err
+	}
+
+	attributes := make(map[string]string)
+	for _, attribute := range foundRealm.Attributes {
+		attributes[attribute.Name] = attribute.Value
+	}
+
+	return &dtos.GetRealmDTO{
+		ID:                      foundRealm.ID,
+		Name:                    foundRealm.Name,
+		DisplayName:             foundRealm.DisplayName,
+		Logo:                    foundRealm.Logo,
+		SupportURL:              foundRealm.SupportURL,
+		SupportEmail:            foundRealm.SupportEmail,
+		DuplicateEmailAllowed:   foundRealm.DuplicateEmailAllowed,
+		DuplicatePhoneAllowed:   foundRealm.DuplicatePhoneAllowed,
+		RegisterEmailAsUsername: foundRealm.RegisterEmailAsUsername,
+		RegisterPhoneAsUsername: foundRealm.RegisterPhoneAsUsername,
+		Enabled:                 foundRealm.Enabled,
+		Attributes:              attributes,
+	}, nil
 }
 
 func (r usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {

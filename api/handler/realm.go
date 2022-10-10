@@ -36,6 +36,20 @@ func (r handler) GetRealms(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
+func (r handler) GetRealmByID(res http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+
+	foundRealm, err := r.realm.GetRealmByID(uuid.MustParse(params["realmId"]))
+
+	if err != nil {
+		util.RespondWithError(res, http.StatusNotFound, "No realm found")
+		return
+	}
+
+	util.RespondWithJSON(res, http.StatusOK, foundRealm)
+	return
+}
+
 func (r handler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 	var body dtos.CreateRealmDTO
 
