@@ -86,6 +86,7 @@ func (u usecase) CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error) {
 		Description:              body.Description,
 		Protocol:                 body.Protocol,
 		ClientID:                 body.ClientID,
+		RealmID:                  body.RealmID,
 		PublicClient:             body.PublicClient,
 		StandardFlowEnabled:      body.StandardFlowEnabled,
 		ImplicitFlowEnabled:      body.ImplicitFlowEnabled,
