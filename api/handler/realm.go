@@ -32,15 +32,14 @@ func NewRealmHandler(usecase realm.RealmUsecase, logger *zap.Logger) *realmHandl
 // @Produce      json
 // @Success      200  {array}   dtos.ListRealmDTO
 // @Router       /realm [get]
-func (r realmHandler) GetRealms(res http.ResponseWriter, req *http.Request) {
-	foundRealms := r.realm.GetRealms()
+func (h realmHandler) GetRealms(w http.ResponseWriter, r *http.Request) {
+	foundRealms, err := h.realm.GetRealms()
 
-	if len(foundRealms) == 0 {
-		util.RespondWithError(res, http.StatusNotFound, "No realms found")
-		return
+	if err != nil {
+		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 	}
 
-	util.RespondWithJSON(res, http.StatusOK, foundRealms)
+	util.RespondWithJSON(w, http.StatusOK, foundRealms)
 }
 
 // Get Realm Details godoc
@@ -52,17 +51,17 @@ func (r realmHandler) GetRealms(res http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Success      200  {object}   dtos.GetRealmDTO
 // @Router       /realm/{realmId} [get]
-func (r realmHandler) GetRealmByID(res http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
+func (h realmHandler) GetRealmByID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 
-	foundRealm, err := r.realm.GetRealmByID(uuid.MustParse(params["realmId"]))
+	foundRealm, err := h.realm.GetRealmByID(uuid.MustParse(params["realmId"]))
 
 	if err != nil {
-		util.RespondWithError(res, http.StatusNotFound, "No realm found")
+		util.RespondWithError(w, http.StatusNotFound, "No realm found")
 		return
 	}
 
-	util.RespondWithJSON(res, http.StatusOK, foundRealm)
+	util.RespondWithJSON(w, http.StatusOK, foundRealm)
 }
 
 // Create Realm Details godoc
@@ -74,22 +73,22 @@ func (r realmHandler) GetRealmByID(res http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Success      200  {string}   uuid.UUID
 // @Router       /realm [post]
-func (r realmHandler) CreateRealm(res http.ResponseWriter, req *http.Request) {
+func (h realmHandler) CreateRealm(w http.ResponseWriter, r *http.Request) {
 	var body dtos.CreateRealmDTO
 
-	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
-		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	createdRealm, err := r.realm.CreateRealm(body)
+	createdRealm, err := h.realm.CreateRealm(body)
 
 	if err != nil {
-		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
+		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	util.RespondWithJSON(res, http.StatusOK, createdRealm)
+	util.RespondWithJSON(w, http.StatusOK, createdRealm)
 }
 
 // Update Realm Details godoc
@@ -102,24 +101,24 @@ func (r realmHandler) CreateRealm(res http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Success      200  {string}   uuid.UUID
 // @Router       /realm/{realmId} [put]
-func (r realmHandler) UpdateRealm(res http.ResponseWriter, req *http.Request) {
+func (h realmHandler) UpdateRealm(w http.ResponseWriter, r *http.Request) {
 	var body dtos.UpdateRealmDTO
 
-	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
-		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	params := mux.Vars(req)
+	params := mux.Vars(r)
 
-	updatedRealm, err := r.realm.UpdateRealm(uuid.MustParse(params["realmId"]), body)
+	updatedRealm, err := h.realm.UpdateRealm(uuid.MustParse(params["realmId"]), body)
 
 	if err != nil {
-		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
+		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	util.RespondWithJSON(res, http.StatusOK, updatedRealm)
+	util.RespondWithJSON(w, http.StatusOK, updatedRealm)
 }
 
 // Delete Realm godoc
@@ -131,13 +130,13 @@ func (r realmHandler) UpdateRealm(res http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Success      200  {boolean}   bool
 // @Router       /realm/{realmId} [delete]
-func (r realmHandler) DeleteRealm(res http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
+func (h realmHandler) DeleteRealm(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 
-	if err := r.realm.DeleteRealm(uuid.MustParse(params["realmId"])); err != nil {
-		util.RespondWithError(res, http.StatusInternalServerError, err.Error())
+	if _, err := h.realm.DeleteRealm(uuid.MustParse(params["realmId"])); err != nil {
+		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	util.RespondWithJSON(res, http.StatusOK, true)
+	util.RespondWithJSON(w, http.StatusOK, true)
 }

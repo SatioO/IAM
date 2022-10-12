@@ -4,6 +4,7 @@ import "github.com/google/uuid"
 
 type ListClientsDTO struct {
 	ID                       uuid.UUID `json:"id"`
+	ClientID                 string    `json:"client_id"`
 	Name                     string    `json:"name"`
 	Description              string    `json:"description"`
 	Protocol                 string    `json:"protocol"`
@@ -20,6 +21,7 @@ type ListClientsDTO struct {
 
 type GetClientDTO struct {
 	ID                       uuid.UUID `json:"id"`
+	ClientID                 string    `json:"client_id"`
 	Name                     string    `json:"name"`
 	Description              string    `json:"description"`
 	Protocol                 string    `json:"protocol"`
@@ -36,6 +38,7 @@ type GetClientDTO struct {
 
 type CreateClientDTO struct {
 	Name                     string `json:"name"`
+	ClientID                 string `json:"client_id"`
 	Description              string `json:"description"`
 	Protocol                 string `json:"protocol"`
 	PublicClient             *bool  `json:"public_client"`
