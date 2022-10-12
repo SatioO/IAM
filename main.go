@@ -83,4 +83,5 @@ func main() {
 	logger := s.InitializeLogger()
 	s.InitializeRouter(db, logger)
 	s.Run("3000")
+
 }

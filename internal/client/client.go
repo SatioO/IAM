@@ -17,8 +17,8 @@ type ClientUsecase interface {
 type Client struct {
 	ID                       uuid.UUID `gorm:"type:uuid;primary_key"`
 	ClientID                 string    `gorm:"not null"`
-	RealmID                  uuid.UUID
-	Name                     string `gorm:"not null"`
+	RealmID                  uuid.UUID `gorm:"column:realm_id"`
+	Name                     string    `gorm:"not null"`
 	Description              string
 	Protocol                 string `gorm:"default:openid-connect;not null"`
 	PublicClient             *bool  `gorm:"default:false;not null"`

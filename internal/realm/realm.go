@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/satioO/iam/internal/client"
 	"gorm.io/gorm"
 )
 
@@ -19,14 +20,15 @@ type Realm struct {
 	Logo                    string
 	SupportURL              string
 	SupportEmail            string
-	DuplicateEmailAllowed   *bool     `gorm:"default:false"`
-	DuplicatePhoneAllowed   *bool     `gorm:"default:false"`
-	RegisterEmailAsUsername *bool     `gorm:"default:true"`
-	RegisterPhoneAsUsername *bool     `gorm:"default:false"`
-	Enabled                 *bool     `gorm:"not null"`
-	CreatedAt               time.Time `gorm:"autoCreateTime:milli"`
-	UpdatedAt               time.Time `gorm:"autoUpdateTime:milli"`
-	Attributes              []RealmAttribute
+	DuplicateEmailAllowed   *bool            `gorm:"default:false"`
+	DuplicatePhoneAllowed   *bool            `gorm:"default:false"`
+	RegisterEmailAsUsername *bool            `gorm:"default:true"`
+	RegisterPhoneAsUsername *bool            `gorm:"default:false"`
+	Enabled                 *bool            `gorm:"not null"`
+	CreatedAt               time.Time        `gorm:"autoCreateTime:milli"`
+	UpdatedAt               time.Time        `gorm:"autoUpdateTime:milli"`
+	Attributes              []RealmAttribute `gorm:"ForeignKey:RealmID"`
+	Clients                 []client.Client  `gorm:"ForeignKey:RealmID"`
 }
 
 // TableName overrides the table name used by User to `profiles`
