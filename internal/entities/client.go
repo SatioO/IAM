@@ -1,16 +1,17 @@
 package entities
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Client struct {
 	ID                       uuid.UUID `gorm:"type:uuid;primary_key"`
-	ClientID                 string    `gorm:"not null"`
+	ClientID                 string    `gorm:"not null;unique"`
 	RealmID                  uuid.UUID `gorm:"column:realm_id"`
 	Realm                    Realm
-	Name                     string `gorm:"not null"`
 	Description              string
 	Protocol                 string `gorm:"default:openid-connect;not null"`
 	PublicClient             *bool  `gorm:"default:false;not null"`
@@ -21,7 +22,9 @@ type Client struct {
 	RootURL                  string
 	BaseURL                  string
 	RedirectURIs             string
-	Enabled                  *bool `gorm:"default:false;not null"`
+	Enabled                  *bool     `gorm:"default:false;not null"`
+	CreatedAt                time.Time `gorm:"autoCreateTime:milli"`
+	UpdatedAt                time.Time `gorm:"autoUpdateTime:milli"`
 }
 
 func (Client) TableName() string {

@@ -38,8 +38,8 @@ func (u *Realm) BeforeCreate(tx *gorm.DB) (err error) {
 
 type RealmAttribute struct {
 	ID        uuid.UUID `gorm:"type:uuid;primary_key"`
-	Name      string    `gorm:"not null"`
-	RealmID   string
+	Name      string    `gorm:"not null;unique"`
+	RealmID   string    `gorm:"column:realm_id;not null"`
 	Value     string
 	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime:milli"`

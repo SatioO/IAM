@@ -22,7 +22,6 @@ type ListClientsDTO struct {
 type GetClientDTO struct {
 	ID                       uuid.UUID `json:"id"`
 	ClientID                 string    `json:"client_id"`
-	Name                     string    `json:"name"`
 	Description              string    `json:"description"`
 	Protocol                 string    `json:"protocol"`
 	PublicClient             *bool     `json:"public_client"`
@@ -37,7 +36,6 @@ type GetClientDTO struct {
 }
 
 type CreateClientDTO struct {
-	Name                     string    `json:"name"`
 	ClientID                 string    `json:"client_id"`
 	RealmID                  uuid.UUID `json:"realm_id"`
 	Description              string    `json:"description"`
@@ -54,7 +52,7 @@ type CreateClientDTO struct {
 }
 
 type UpdateClientDTO struct {
-	Name                     string `json:"name"`
+	ClientID                 string `json:"client_id"`
 	Description              string `json:"description"`
 	Protocol                 string `json:"protocol"`
 	PublicClient             *bool  `json:"public_client"`

@@ -342,6 +342,9 @@ const docTemplate = `{
                 "base_url": {
                     "type": "string"
                 },
+                "client_id": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -354,14 +357,14 @@ const docTemplate = `{
                 "implicit_flow_enabled": {
                     "type": "boolean"
                 },
-                "name": {
-                    "type": "string"
-                },
                 "protocol": {
                     "type": "string"
                 },
                 "public_client": {
                     "type": "boolean"
+                },
+                "realm_id": {
+                    "type": "string"
                 },
                 "redirect_uris": {
                     "type": "string"
@@ -424,6 +427,9 @@ const docTemplate = `{
                 "base_url": {
                     "type": "string"
                 },
+                "client_id": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -438,9 +444,6 @@ const docTemplate = `{
                 },
                 "implicit_flow_enabled": {
                     "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
                 },
                 "protocol": {
                     "type": "string"
@@ -510,6 +513,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "base_url": {
+                    "type": "string"
+                },
+                "client_id": {
                     "type": "string"
                 },
                 "description": {
@@ -600,6 +606,9 @@ const docTemplate = `{
                 "base_url": {
                     "type": "string"
                 },
+                "client_id": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -608,9 +617,6 @@ const docTemplate = `{
                 },
                 "implicit_flow_enabled": {
                     "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
                 },
                 "protocol": {
                     "type": "string"

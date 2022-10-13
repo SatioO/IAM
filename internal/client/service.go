@@ -42,7 +42,6 @@ func (u usecase) GetClients() ([]dtos.ListClientsDTO, error) {
 		result = append(result, dtos.ListClientsDTO{
 			ID:                       client.ID,
 			ClientID:                 client.ClientID,
-			Name:                     client.Name,
 			Description:              client.Description,
 			Protocol:                 client.Protocol,
 			PublicClient:             client.PublicClient,
@@ -72,7 +71,6 @@ func (u usecase) GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error) {
 	return &dtos.GetClientDTO{
 		ID:                       foundClient.ID,
 		ClientID:                 foundClient.ClientID,
-		Name:                     foundClient.Name,
 		Description:              foundClient.Description,
 		Protocol:                 foundClient.Protocol,
 		PublicClient:             foundClient.PublicClient,
@@ -91,10 +89,9 @@ func (u usecase) CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error) {
 	u.logger.Info(fmt.Sprintf("Creating Client: %s", body.ClientID))
 
 	createdClient := &entities.Client{
-		Name:                     body.Name,
+		ClientID:                 body.ClientID,
 		Description:              body.Description,
 		Protocol:                 body.Protocol,
-		ClientID:                 body.ClientID,
 		RealmID:                  body.RealmID,
 		PublicClient:             body.PublicClient,
 		StandardFlowEnabled:      body.StandardFlowEnabled,
@@ -118,7 +115,7 @@ func (u usecase) UpdateClient(clientId uuid.UUID, body dtos.UpdateClientDTO) (bo
 	u.logger.Info(fmt.Sprintf("Updating Client: %s", clientId))
 
 	updatedClient := &entities.Client{
-		Name:                     body.Name,
+		ClientID:                 body.ClientID,
 		Description:              body.Description,
 		Protocol:                 body.Protocol,
 		PublicClient:             body.PublicClient,

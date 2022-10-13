@@ -3,6 +3,8 @@ definitions:
     properties:
       base_url:
         type: string
+      client_id:
+        type: string
       description:
         type: string
       direct_access_grant_enabled:
@@ -11,12 +13,12 @@ definitions:
         type: boolean
       implicit_flow_enabled:
         type: boolean
-      name:
-        type: string
       protocol:
         type: string
       public_client:
         type: boolean
+      realm_id:
+        type: string
       redirect_uris:
         type: string
       root_url:
@@ -57,6 +59,8 @@ definitions:
     properties:
       base_url:
         type: string
+      client_id:
+        type: string
       description:
         type: string
       direct_access_grant_enabled:
@@ -67,8 +71,6 @@ definitions:
         type: string
       implicit_flow_enabled:
         type: boolean
-      name:
-        type: string
       protocol:
         type: string
       public_client:
@@ -114,6 +116,8 @@ definitions:
   dtos.ListClientsDTO:
     properties:
       base_url:
+        type: string
+      client_id:
         type: string
       description:
         type: string
@@ -173,14 +177,14 @@ definitions:
     properties:
       base_url:
         type: string
+      client_id:
+        type: string
       description:
         type: string
       direct_access_grant_enabled:
         type: boolean
       implicit_flow_enabled:
         type: boolean
-      name:
-        type: string
       protocol:
         type: string
       public_client:
