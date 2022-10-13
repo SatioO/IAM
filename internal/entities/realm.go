@@ -1,16 +1,10 @@
-package realm
+package entities
 
 import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/satioO/iam/internal/client"
 	"gorm.io/gorm"
-)
-
-const (
-	ACCESS_TOKEN_LIFESPAN  = "300"
-	REFRESH_TOKEN_LIFESPAN = "600"
 )
 
 type Realm struct {
@@ -28,7 +22,7 @@ type Realm struct {
 	CreatedAt               time.Time        `gorm:"autoCreateTime:milli"`
 	UpdatedAt               time.Time        `gorm:"autoUpdateTime:milli"`
 	Attributes              []RealmAttribute `gorm:"ForeignKey:RealmID"`
-	Clients                 []client.Client  `gorm:"ForeignKey:RealmID"`
+	Clients                 []Client         `gorm:"ForeignKey:RealmID"`
 }
 
 // TableName overrides the table name used by User to `profiles`

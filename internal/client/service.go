@@ -4,10 +4,19 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/satioO/iam/internal/entities"
 	"github.com/satioO/iam/pkg/dtos"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
+
+type ClientUsecase interface {
+	GetClients() ([]dtos.ListClientsDTO, error)
+	GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error)
+	CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error)
+	UpdateClient(clientId uuid.UUID, body dtos.UpdateClientDTO) (bool, error)
+	DeleteClient(clientId uuid.UUID) (bool, error)
+}
 
 type usecase struct {
 	db     *gorm.DB
@@ -18,12 +27,12 @@ func NewClientUsecase(db *gorm.DB, logger *zap.Logger) *usecase {
 	return &usecase{db, logger}
 }
 
-func (u usecase) GetClients() (*[]dtos.ListClientsDTO, error) {
+func (u usecase) GetClients() ([]dtos.ListClientsDTO, error) {
 	u.logger.Info("Getting Clients:")
 
-	var clients []Client
+	var clients []entities.Client
 
-	if err := u.db.Find(&clients).Error; err != nil {
+	if err := u.db.Preload("Realm").Find(&clients).Error; err != nil {
 		return nil, err
 	}
 
@@ -48,13 +57,13 @@ func (u usecase) GetClients() (*[]dtos.ListClientsDTO, error) {
 		})
 	}
 
-	return &result, nil
+	return result, nil
 }
 
 func (u usecase) GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error) {
 	u.logger.Info(fmt.Sprintf("Getting Client Details: %s", clientId))
 
-	var foundClient Client
+	var foundClient entities.Client
 
 	if err := u.db.Where("client_id = ?", clientId).First(&foundClient).Error; err != nil {
 		return nil, err
@@ -81,7 +90,7 @@ func (u usecase) GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error) {
 func (u usecase) CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error) {
 	u.logger.Info(fmt.Sprintf("Creating Client: %s", body.ClientID))
 
-	createdClient := &Client{
+	createdClient := &entities.Client{
 		Name:                     body.Name,
 		Description:              body.Description,
 		Protocol:                 body.Protocol,
@@ -108,7 +117,7 @@ func (u usecase) CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error) {
 func (u usecase) UpdateClient(clientId uuid.UUID, body dtos.UpdateClientDTO) (bool, error) {
 	u.logger.Info(fmt.Sprintf("Updating Client: %s", clientId))
 
-	updatedClient := &Client{
+	updatedClient := &entities.Client{
 		Name:                     body.Name,
 		Description:              body.Description,
 		Protocol:                 body.Protocol,

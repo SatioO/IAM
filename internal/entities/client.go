@@ -1,24 +1,16 @@
-package client
+package entities
 
 import (
 	"github.com/google/uuid"
-	"github.com/satioO/iam/pkg/dtos"
 	"gorm.io/gorm"
 )
-
-type ClientUsecase interface {
-	GetClients() (*[]dtos.ListClientsDTO, error)
-	GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error)
-	CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error)
-	UpdateClient(clientId uuid.UUID, body dtos.UpdateClientDTO) (bool, error)
-	DeleteClient(clientId uuid.UUID) (bool, error)
-}
 
 type Client struct {
 	ID                       uuid.UUID `gorm:"type:uuid;primary_key"`
 	ClientID                 string    `gorm:"not null"`
 	RealmID                  uuid.UUID `gorm:"column:realm_id"`
-	Name                     string    `gorm:"not null"`
+	Realm                    Realm
+	Name                     string `gorm:"not null"`
 	Description              string
 	Protocol                 string `gorm:"default:openid-connect;not null"`
 	PublicClient             *bool  `gorm:"default:false;not null"`

@@ -5,8 +5,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
-	"github.com/satioO/iam/internal/client"
-	"github.com/satioO/iam/internal/realm"
+	"github.com/satioO/iam/internal/entities"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -45,9 +44,9 @@ func CreateDatabaseConnection() (*gorm.DB, error) {
 func AutoMigrateDB(db *gorm.DB) error {
 	// Auto migrate database
 	// Add new models here
-	db.AutoMigrate(&realm.RealmAttribute{})
-	db.AutoMigrate(&client.Client{})
-	db.AutoMigrate(&realm.Realm{})
+	db.AutoMigrate(&entities.RealmAttribute{})
+	db.AutoMigrate(&entities.Client{})
+	db.AutoMigrate(&entities.Realm{})
 	return nil
 }
 
