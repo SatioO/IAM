@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/satioO/iam/api"
 	_ "github.com/satioO/iam/docs"
+	"github.com/satioO/iam/pkg/trace"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -33,11 +35,15 @@ func (s *server) InitializeLogger() *zap.Logger {
 	return logger
 }
 
+func (s *server) InitializeTracer() {
+
+}
+
 func (s *server) InitializeDatabase() *gorm.DB {
 	// Initialize DB connection
 	db, err := CreateDatabaseConnection()
 	if err != nil {
-		log.Err(err).Msg("Error connecting DB")
+		log.Fatal().Msg(err.Error())
 	}
 
 	// Migrate DB
@@ -58,6 +64,7 @@ func (s *server) InitializeRouter(db *gorm.DB, logger *zap.Logger) {
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),
 	)).Methods(http.MethodGet)
+
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	s.router = router
 }
@@ -78,9 +85,28 @@ func (s server) Run(servicePort string) {
 // @contact.name
 // @contact.email vaibhav.satam29991@gmail.com
 func main() {
+	ctx := context.Background()
+
 	s := server{}
 	db := s.InitializeDatabase()
 	logger := s.InitializeLogger()
+
+	// Bootstrap tracer.
+	tracer, err := trace.NewProvider(trace.ProviderConfig{
+		JaegerEndpoint: "http://localhost:14268/api/traces",
+		ServiceName:    "IAM",
+		ServiceVersion: "1.0.0",
+		Environment:    "dev",
+		Disabled:       false,
+	})
+
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	defer tracer.Close(ctx)
+
+	s.InitializeTracer()
 	s.InitializeRouter(db, logger)
 	s.Run("3000")
 
