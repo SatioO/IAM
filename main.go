@@ -12,6 +12,7 @@ import (
 	_ "github.com/satioO/iam/docs"
 	"github.com/satioO/iam/pkg/trace"
 	httpSwagger "github.com/swaggo/http-swagger"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gorm.io/gorm"
@@ -58,6 +59,8 @@ func (s *server) InitializeDatabase() *gorm.DB {
 func (s *server) InitializeRouter(db *gorm.DB, logger *zap.Logger) {
 	// Initialize router
 	router := api.NewMux(db, logger)
+	router.Use(otelmux.Middleware("IAM"))
+
 	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:3000/swagger/doc.json"), //The url pointing to API definition
 		httpSwagger.DeepLinking(true),

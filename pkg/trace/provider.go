@@ -29,7 +29,7 @@ func NewProvider(config ProviderConfig) (Provider, error) {
 		return Provider{provider: trace.NewNoopTracerProvider()}, nil
 	}
 
-	exp, err := jaeger.New(
+	exporter, err := jaeger.New(
 		jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.JaegerEndpoint)),
 	)
 
@@ -37,17 +37,18 @@ func NewProvider(config ProviderConfig) (Provider, error) {
 		return Provider{}, err
 	}
 
-	prv := tracesdk.NewTracerProvider(
-		tracesdk.WithBatcher(exp),
+	traceProvider := tracesdk.NewTracerProvider(
+		tracesdk.WithSampler(tracesdk.AlwaysSample()),
+		tracesdk.WithSpanProcessor(tracesdk.NewBatchSpanProcessor(exporter)),
 		tracesdk.WithResource(sdkresource.NewWithAttributes(
 			semconv.SchemaURL,
 			semconv.ServiceNameKey.String(config.ServiceName),
-			semconv.DeploymentEnvironmentKey.String(config.Environment),
 			semconv.ServiceVersionKey.String(config.ServiceVersion),
+			semconv.DeploymentEnvironmentKey.String(config.Environment),
 		)),
 	)
 
-	otel.SetTracerProvider(prv)
+	otel.SetTracerProvider(traceProvider)
 
 	// Register the W3C trace context and baggage propagators so data is propagated across services/processes
 	otel.SetTextMapPropagator(
@@ -57,7 +58,7 @@ func NewProvider(config ProviderConfig) (Provider, error) {
 		),
 	)
 
-	return Provider{provider: prv}, nil
+	return Provider{provider: traceProvider}, nil
 }
 
 // Close shuts down the tracer provider only if it was not "no operations"
