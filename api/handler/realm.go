@@ -8,16 +8,16 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satioO/iam/internal/realm"
 	"github.com/satioO/iam/pkg/dtos"
+	"github.com/satioO/iam/pkg/log"
 	"github.com/satioO/iam/util"
-	"go.uber.org/zap"
 )
 
 type realmHandler struct {
 	realm  realm.RealmUsecase
-	logger *zap.Logger
+	logger log.Factory
 }
 
-func NewRealmHandler(usecase realm.RealmUsecase, logger *zap.Logger) *realmHandler {
+func NewRealmHandler(usecase realm.RealmUsecase, logger log.Factory) *realmHandler {
 	return &realmHandler{
 		realm:  usecase,
 		logger: logger,
@@ -33,10 +33,11 @@ func NewRealmHandler(usecase realm.RealmUsecase, logger *zap.Logger) *realmHandl
 // @Success      200  {array}   dtos.ListRealmDTO
 // @Router       /realm [get]
 func (h realmHandler) GetRealms(w http.ResponseWriter, r *http.Request) {
-	foundRealms, err := h.realm.GetRealms()
+	foundRealms, err := h.realm.GetRealms(r.Context())
 
 	if err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	util.RespondWithJSON(w, http.StatusOK, foundRealms)

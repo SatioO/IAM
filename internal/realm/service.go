@@ -1,12 +1,13 @@
 package realm
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/satioO/iam/internal/entities"
 	"github.com/satioO/iam/pkg/dtos"
-	"go.uber.org/zap"
+	"github.com/satioO/iam/pkg/log"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +17,7 @@ const (
 )
 
 type RealmUsecase interface {
-	GetRealms() ([]dtos.ListRealmDTO, error)
+	GetRealms(ctx context.Context) ([]dtos.ListRealmDTO, error)
 	GetRealmByID(realmId uuid.UUID) (*dtos.GetRealmDTO, error)
 	CreateRealm(realm dtos.CreateRealmDTO) (*uuid.UUID, error)
 	UpdateRealm(realmId uuid.UUID, realm dtos.UpdateRealmDTO) (bool, error)
@@ -25,18 +26,18 @@ type RealmUsecase interface {
 
 type usecase struct {
 	db     *gorm.DB
-	logger *zap.Logger
+	logger log.Factory
 }
 
-func NewRealmUsecase(db *gorm.DB, logger *zap.Logger) *usecase {
+func NewRealmUsecase(db *gorm.DB, logger log.Factory) *usecase {
 	return &usecase{
 		db,
 		logger,
 	}
 }
 
-func (u usecase) GetRealms() ([]dtos.ListRealmDTO, error) {
-	u.logger.Info("Fetching realms:::")
+func (u usecase) GetRealms(ctx context.Context) ([]dtos.ListRealmDTO, error) {
+	u.logger.For(ctx).Info("Fetching realms:::")
 
 	var foundRealms []entities.Realm
 	if err := u.db.Preload("Attributes").Where("enabled = ?", true).Find(&foundRealms).Error; err != nil {
@@ -98,7 +99,7 @@ func (u usecase) GetRealmByID(realmId uuid.UUID) (*dtos.GetRealmDTO, error) {
 }
 
 func (u usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
-	u.logger.Info(fmt.Sprintf("Creating realm::: %s", body.Name))
+	u.logger.Bg().Info(fmt.Sprintf("Creating realm::: %s", body.Name))
 	defaultAttributes := map[string]string{
 		"access_token_lifespan":  ACCESS_TOKEN_LIFESPAN,
 		"refresh_token_lifespan": REFRESH_TOKEN_LIFESPAN,
@@ -138,7 +139,7 @@ func (u usecase) CreateRealm(body dtos.CreateRealmDTO) (*uuid.UUID, error) {
 }
 
 func (u usecase) UpdateRealm(realmId uuid.UUID, realm dtos.UpdateRealmDTO) (bool, error) {
-	u.logger.Info(fmt.Sprintf("Updating realm::: %s", realmId))
+	u.logger.Bg().Info(fmt.Sprintf("Updating realm::: %s", realmId))
 
 	updatedRealm := entities.Realm{
 		Name:                    realm.Name,
@@ -164,7 +165,7 @@ func (u usecase) DeleteRealm(realmId uuid.UUID) (bool, error) {
 	deletedRealm := entities.Realm{Enabled: &status}
 
 	query := u.db.Where("id = ?", realmId).Updates(&deletedRealm)
-	u.logger.Info(fmt.Sprintf("rows affected: %d", query.RowsAffected))
+	u.logger.Bg().Info(fmt.Sprintf("rows affected: %d", query.RowsAffected))
 
 	if err := query.Error; err != nil {
 		return false, err

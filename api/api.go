@@ -8,11 +8,11 @@ import (
 	"github.com/satioO/iam/api/handler"
 	"github.com/satioO/iam/internal/client"
 	"github.com/satioO/iam/internal/realm"
-	"go.uber.org/zap"
+	"github.com/satioO/iam/pkg/log"
 	"gorm.io/gorm"
 )
 
-func NewMux(db *gorm.DB, logger *zap.Logger) *mux.Router {
+func NewMux(db *gorm.DB, logger log.Factory) *mux.Router {
 	r := mux.NewRouter()
 
 	r.Use(chimid.RequestID)
@@ -29,7 +29,7 @@ func NewMux(db *gorm.DB, logger *zap.Logger) *mux.Router {
 	r.HandleFunc("/realm/{realmId}", realmHandler.UpdateRealm).Methods(http.MethodPut)
 	r.HandleFunc("/realm/{realmId}", realmHandler.DeleteRealm).Methods(http.MethodDelete)
 
-	// Client Management
+	// // Client Management
 	clientUsecase := client.NewClientUsecase(db, logger)
 	clientHandler := handler.NewClientHandler(clientUsecase, logger)
 

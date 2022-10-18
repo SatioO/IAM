@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/satioO/iam/internal/entities"
 	"github.com/satioO/iam/pkg/dtos"
-	"go.uber.org/zap"
+	"github.com/satioO/iam/pkg/log"
 	"gorm.io/gorm"
 )
 
@@ -20,15 +20,15 @@ type ClientUsecase interface {
 
 type usecase struct {
 	db     *gorm.DB
-	logger *zap.Logger
+	logger log.Factory
 }
 
-func NewClientUsecase(db *gorm.DB, logger *zap.Logger) *usecase {
+func NewClientUsecase(db *gorm.DB, logger log.Factory) *usecase {
 	return &usecase{db, logger}
 }
 
 func (u usecase) GetClients() ([]dtos.ListClientsDTO, error) {
-	u.logger.Info("Getting Clients:")
+	u.logger.Bg().Info("Getting Clients:")
 
 	var clients []entities.Client
 
@@ -60,7 +60,7 @@ func (u usecase) GetClients() ([]dtos.ListClientsDTO, error) {
 }
 
 func (u usecase) GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error) {
-	u.logger.Info(fmt.Sprintf("Getting Client Details: %s", clientId))
+	u.logger.Bg().Info(fmt.Sprintf("Getting Client Details: %s", clientId))
 
 	var foundClient entities.Client
 
@@ -86,7 +86,7 @@ func (u usecase) GetClientByID(clientId uuid.UUID) (*dtos.GetClientDTO, error) {
 }
 
 func (u usecase) CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error) {
-	u.logger.Info(fmt.Sprintf("Creating Client: %s", body.ClientID))
+	u.logger.Bg().Info(fmt.Sprintf("Creating Client: %s", body.ClientID))
 
 	createdClient := &entities.Client{
 		ClientID:                 body.ClientID,
@@ -112,7 +112,7 @@ func (u usecase) CreateClient(body dtos.CreateClientDTO) (*uuid.UUID, error) {
 }
 
 func (u usecase) UpdateClient(clientId uuid.UUID, body dtos.UpdateClientDTO) (bool, error) {
-	u.logger.Info(fmt.Sprintf("Updating Client: %s", clientId))
+	u.logger.Bg().Info(fmt.Sprintf("Updating Client: %s", clientId))
 
 	updatedClient := &entities.Client{
 		ClientID:                 body.ClientID,
@@ -136,7 +136,7 @@ func (u usecase) UpdateClient(clientId uuid.UUID, body dtos.UpdateClientDTO) (bo
 }
 
 func (u usecase) DeleteClient(clientId uuid.UUID) (bool, error) {
-	u.logger.Info(fmt.Sprintf("Deleting Client: %s", clientId))
+	u.logger.Bg().Info(fmt.Sprintf("Deleting Client: %s", clientId))
 	if err := u.db.Where("client_id = ?", clientId).Update("enabled", false).Error; err != nil {
 		return false, err
 	}

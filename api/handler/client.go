@@ -8,16 +8,16 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/satioO/iam/internal/client"
 	"github.com/satioO/iam/pkg/dtos"
+	"github.com/satioO/iam/pkg/log"
 	"github.com/satioO/iam/util"
-	"go.uber.org/zap"
 )
 
 type clientHandler struct {
 	usecase client.ClientUsecase
-	logger  *zap.Logger
+	logger  log.Factory
 }
 
-func NewClientHandler(usecase client.ClientUsecase, logger *zap.Logger) *clientHandler {
+func NewClientHandler(usecase client.ClientUsecase, logger log.Factory) *clientHandler {
 	return &clientHandler{usecase, logger}
 }
 

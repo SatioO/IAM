@@ -7,58 +7,52 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/rs/zerolog/log"
 	"github.com/satioO/iam/api"
 	_ "github.com/satioO/iam/docs"
+	"github.com/satioO/iam/pkg/log"
 	"github.com/satioO/iam/pkg/trace"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
 	"gorm.io/gorm"
 )
 
 type server struct {
 	router *mux.Router
-	logger *zap.Logger
+	logger log.Factory
 }
 
-func (s *server) InitializeLogger() *zap.Logger {
+func (s *server) InitializeLogger() {
 	config := zap.NewProductionEncoderConfig()
 	config.EncodeTime = zapcore.ISO8601TimeEncoder
-	consoleEncoder := zapcore.NewConsoleEncoder(config)
-	defaultLogLevel := zapcore.DebugLevel
 	core := zapcore.NewTee(
-		zapcore.NewCore(consoleEncoder, zapcore.AddSync(os.Stdout), defaultLogLevel),
+		zapcore.NewCore(zapcore.NewJSONEncoder(config), zapcore.AddSync(os.Stdout), zapcore.DebugLevel),
 	)
 	logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
-	s.logger = logger
-	return logger
-}
-
-func (s *server) InitializeTracer() {
-
+	s.logger = log.NewLogger(logger)
 }
 
 func (s *server) InitializeDatabase() *gorm.DB {
 	// Initialize DB connection
 	db, err := CreateDatabaseConnection()
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		fmt.Println(err.Error())
 	}
 
 	// Migrate DB
 	err = AutoMigrateDB(db)
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		fmt.Println(err.Error())
 	}
 
 	return db
 }
 
-func (s *server) InitializeRouter(db *gorm.DB, logger *zap.Logger) {
+func (s *server) InitializeRouter(db *gorm.DB) {
 	// Initialize router
-	router := api.NewMux(db, logger)
+	router := api.NewMux(db, s.logger)
 	router.Use(otelmux.Middleware("IAM"))
 
 	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
@@ -77,8 +71,8 @@ func (s server) Run(servicePort string) {
 		Addr:    ":" + servicePort,
 		Handler: s.router,
 	}
-	s.logger.Info(fmt.Sprintf("App started listening on PORT %s", servicePort))
-	s.logger.Fatal(srv.ListenAndServe().Error())
+
+	srv.ListenAndServe()
 }
 
 // @title Identity Management Server
@@ -92,7 +86,7 @@ func main() {
 
 	s := server{}
 	db := s.InitializeDatabase()
-	logger := s.InitializeLogger()
+	s.InitializeLogger()
 
 	// Bootstrap tracer.
 	tracer, err := trace.NewProvider(trace.ProviderConfig{
@@ -104,13 +98,12 @@ func main() {
 	})
 
 	if err != nil {
-		logger.Fatal(err.Error())
+		fmt.Println(err.Error())
 	}
 
 	defer tracer.Close(ctx)
 
-	s.InitializeTracer()
-	s.InitializeRouter(db, logger)
+	s.InitializeRouter(db)
 	s.Run("3000")
 
 }
