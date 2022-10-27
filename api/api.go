@@ -8,6 +8,7 @@ import (
 	"github.com/satioO/iam/api/handler"
 	"github.com/satioO/iam/internal/client"
 	"github.com/satioO/iam/internal/realm"
+	"github.com/satioO/iam/internal/user"
 	"github.com/satioO/iam/pkg/log"
 	"gorm.io/gorm"
 )
@@ -29,7 +30,7 @@ func NewMux(db *gorm.DB, logger log.Factory) *mux.Router {
 	r.HandleFunc("/realm/{realmId}", realmHandler.UpdateRealm).Methods(http.MethodPut)
 	r.HandleFunc("/realm/{realmId}", realmHandler.DeleteRealm).Methods(http.MethodDelete)
 
-	// // Client Management
+	// Client Management
 	clientUsecase := client.NewClientUsecase(db, logger)
 	clientHandler := handler.NewClientHandler(clientUsecase, logger)
 
@@ -38,6 +39,16 @@ func NewMux(db *gorm.DB, logger log.Factory) *mux.Router {
 	r.HandleFunc("/client", clientHandler.CreateClient).Methods(http.MethodPost)
 	r.HandleFunc("/client/{clientId}", clientHandler.UpdateClient).Methods(http.MethodPut)
 	r.HandleFunc("/client/{clientId}", clientHandler.DeleteClient).Methods(http.MethodDelete)
+
+	// User Management
+	userUsecase := user.NewUserUsecase(db, logger)
+	userHandler := handler.NewUserHandler(userUsecase)
+
+	r.HandleFunc("/user", userHandler.GetUsers).Methods(http.MethodGet)
+	r.HandleFunc("/user/{userId}", userHandler.GetUserDetails).Methods(http.MethodGet)
+	r.HandleFunc("/user", userHandler.CreateUser).Methods(http.MethodGet)
+	r.HandleFunc("/user/{userId}", userHandler.UpdateUser).Methods(http.MethodGet)
+	r.HandleFunc("/user/{userId}", userHandler.DeleteUser).Methods(http.MethodGet)
 
 	return r
 }

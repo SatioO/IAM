@@ -53,7 +53,7 @@ func (s *server) InitializeDatabase() *gorm.DB {
 func (s *server) InitializeRouter(db *gorm.DB) {
 	// Initialize router
 	router := api.NewMux(db, s.logger)
-	router.Use(otelmux.Middleware("IAM"))
+	router.Use(otelmux.Middleware("Identity Management Service"))
 
 	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:3000/swagger/doc.json"), //The url pointing to API definition
