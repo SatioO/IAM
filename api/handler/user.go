@@ -74,15 +74,3 @@ func (h handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	util.RespondWithJSON(w, http.StatusOK, nil)
 }
-
-func (h handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	userId := uuid.MustParse(params["userId"])
-
-	if err := h.usecase.DeleteUser(r.Context(), userId); err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	util.RespondWithJSON(w, http.StatusOK, nil)
-}

@@ -2,6 +2,21 @@ package dtos
 
 import "github.com/google/uuid"
 
+type UserStatus int
+
+const (
+	Active UserStatus = iota + 1
+	Provisioned
+	DeProvisioned
+	Suspended
+	UnSuspended
+	Locked
+)
+
+func (u UserStatus) String() string {
+	return []string{"Active", "Provisioned", "UnProvisioned", "Suspended", "UnSuspended", "Locked"}[u-1]
+}
+
 type ListUserDTO struct {
 	ID                  uuid.UUID         `json:"id"`
 	FirstName           string            `json:"first_name"`

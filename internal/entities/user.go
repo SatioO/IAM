@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/satioO/iam/pkg/dtos"
 	"gorm.io/gorm"
 )
 
@@ -17,7 +18,7 @@ type User struct {
 	PhoneCountryCode    string
 	PhoneNumber         string
 	PhoneNumberVerified *bool
-	Status              string          `gorm:"not null"`
+	Status              dtos.UserStatus `gorm:"not null"`
 	Attributes          []UserAttribute `gorm:"ForeignKey:UserID"`
 }
 

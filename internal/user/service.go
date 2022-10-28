@@ -16,7 +16,6 @@ type UserUsecase interface {
 	GetUserDetails(ctx context.Context) (*dtos.GetUserDetailsDTO, error)
 	CreateUser(ctx context.Context, user *dtos.CreateUserDTO) error
 	UpdateUser(ctx context.Context, userId uuid.UUID, user *dtos.UpdateUserDTO) error
-	DeleteUser(ctx context.Context, userId uuid.UUID) error
 }
 
 type userUsecase struct {
@@ -31,15 +30,15 @@ func NewUserUsecase(db *gorm.DB, logger log.Factory) *userUsecase {
 func (u userUsecase) GetUsers(ctx context.Context) ([]dtos.ListUserDTO, error) {
 	u.logger.For(ctx).Info("Fetching users:::")
 
-	var users []entities.User
+	var foundUsers []entities.User
 
-	if err := u.db.Preload("Attributes").Find(&users).Error; err != nil {
+	if err := u.db.Preload("Attributes").Find(&foundUsers).Error; err != nil {
 		return nil, err
 	}
 
 	result := []dtos.ListUserDTO{}
 
-	for _, user := range users {
+	for _, user := range foundUsers {
 		result = append(result, dtos.ListUserDTO{
 			ID:                  user.ID,
 			FirstName:           user.FirstName,
@@ -50,7 +49,7 @@ func (u userUsecase) GetUsers(ctx context.Context) ([]dtos.ListUserDTO, error) {
 			PhoneCountryCode:    user.PhoneCountryCode,
 			PhoneNumber:         user.PhoneNumber,
 			PhoneNumberVerified: *user.PhoneNumberVerified,
-			Status:              user.Status,
+			Status:              user.Status.String(),
 		})
 	}
 
@@ -58,17 +57,53 @@ func (u userUsecase) GetUsers(ctx context.Context) ([]dtos.ListUserDTO, error) {
 }
 
 func (u userUsecase) GetUserDetails(ctx context.Context) (*dtos.GetUserDetailsDTO, error) {
-	return nil, errors.New("Not Implemented")
+	u.logger.For(ctx).Info("Fetching User Details:::")
+
+	var foundUser entities.User
+
+	if err := u.db.Preload("Attributes").First(&foundUser).Error; err != nil {
+		return nil, err
+	}
+
+	result := dtos.GetUserDetailsDTO{
+		ID:                  foundUser.ID,
+		FirstName:           foundUser.FirstName,
+		LastName:            foundUser.LastName,
+		Email:               foundUser.Email,
+		EmailVerified:       *foundUser.EmailVerified,
+		PhoneCountryCode:    foundUser.PhoneCountryCode,
+		PhoneNumber:         foundUser.PhoneNumber,
+		PhoneNumberVerified: *foundUser.PhoneNumberVerified,
+		Status:              foundUser.Status.String(),
+	}
+
+	return &result, nil
 }
 
 func (u userUsecase) CreateUser(ctx context.Context, user *dtos.CreateUserDTO) error {
-	return errors.New("Not Implemented")
+	u.logger.Bg().Info("Creating User:::")
+
+	var status dtos.UserStatus = dtos.Active
+
+	entity := entities.User{
+		FirstName:           user.FirstName,
+		LastName:            user.LastName,
+		Username:            user.Username,
+		Email:               user.Email,
+		EmailVerified:       &user.EmailVerified,
+		PhoneCountryCode:    user.PhoneCountryCode,
+		PhoneNumber:         user.PhoneNumber,
+		PhoneNumberVerified: &user.PhoneNumberVerified,
+		Status:              status,
+	}
+
+	if err := u.db.Create(&entity).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (u userUsecase) UpdateUser(ctx context.Context, userId uuid.UUID, user *dtos.UpdateUserDTO) error {
-	return errors.New("Not Implemented")
-}
-
-func (u userUsecase) DeleteUser(ctx context.Context, userId uuid.UUID) error {
 	return errors.New("Not Implemented")
 }

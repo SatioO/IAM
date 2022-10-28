@@ -46,9 +46,8 @@ func NewMux(db *gorm.DB, logger log.Factory) *mux.Router {
 
 	r.HandleFunc("/user", userHandler.GetUsers).Methods(http.MethodGet)
 	r.HandleFunc("/user/{userId}", userHandler.GetUserDetails).Methods(http.MethodGet)
-	r.HandleFunc("/user", userHandler.CreateUser).Methods(http.MethodGet)
-	r.HandleFunc("/user/{userId}", userHandler.UpdateUser).Methods(http.MethodGet)
-	r.HandleFunc("/user/{userId}", userHandler.DeleteUser).Methods(http.MethodGet)
+	r.HandleFunc("/user", userHandler.CreateUser).Methods(http.MethodPost)
+	r.HandleFunc("/user/{userId}", userHandler.UpdateUser).Methods(http.MethodPut)
 
 	return r
 }
