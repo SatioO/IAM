@@ -47,6 +47,7 @@ func AutoMigrateDB(db *gorm.DB) error {
 	db.AutoMigrate(&entities.RealmAttribute{})
 	db.AutoMigrate(&entities.Client{})
 	db.AutoMigrate(&entities.Realm{})
+	db.AutoMigrate(&entities.UserAttribute{})
 	db.AutoMigrate(&entities.User{})
 	return nil
 }

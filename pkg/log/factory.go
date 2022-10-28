@@ -52,6 +52,9 @@ func printContextInternals(ctx interface{}, inner bool) {
 }
 
 func (b Factory) For(ctx context.Context) Logger {
+	value := ctx.Value("caller")
+
+	fmt.Println(value)
 	if span := trace.SpanFromContext(ctx); span != nil {
 		return b.Bg().With(
 			zap.Field{

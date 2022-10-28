@@ -38,18 +38,18 @@ func (u userUsecase) GetUsers(ctx context.Context) ([]dtos.ListUserDTO, error) {
 
 	result := []dtos.ListUserDTO{}
 
-	for _, user := range foundUsers {
+	for _, foundUser := range foundUsers {
 		result = append(result, dtos.ListUserDTO{
-			ID:                  user.ID,
-			FirstName:           user.FirstName,
-			LastName:            user.LastName,
-			Username:            user.Username,
-			Email:               user.Email,
-			EmailVerified:       *user.EmailVerified,
-			PhoneCountryCode:    user.PhoneCountryCode,
-			PhoneNumber:         user.PhoneNumber,
-			PhoneNumberVerified: *user.PhoneNumberVerified,
-			Status:              user.Status.String(),
+			ID:                  foundUser.ID,
+			FirstName:           foundUser.FirstName,
+			LastName:            foundUser.LastName,
+			Username:            foundUser.Username,
+			Email:               foundUser.Email,
+			EmailVerified:       *foundUser.EmailVerified,
+			PhoneCountryCode:    foundUser.PhoneCountryCode,
+			PhoneNumber:         foundUser.PhoneNumber,
+			PhoneNumberVerified: *foundUser.PhoneNumberVerified,
+			Status:              foundUser.Status.String(),
 		})
 	}
 
@@ -81,7 +81,7 @@ func (u userUsecase) GetUserDetails(ctx context.Context) (*dtos.GetUserDetailsDT
 }
 
 func (u userUsecase) CreateUser(ctx context.Context, user *dtos.CreateUserDTO) error {
-	u.logger.Bg().Info("Creating User:::")
+	u.logger.For(ctx).Info("Creating User:::")
 
 	var status dtos.UserStatus = dtos.Active
 
